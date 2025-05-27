@@ -197,6 +197,29 @@
   let jsonData = [];
   let currentLanguage = 'FR';
 
+async function loadRemoteExcel() {
+  const url = 'https://gg9876543210123456789.github.io/Gg/PlantesMédicinalesTome1.xlsx';
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Erreur chargement fichier Excel');
+    const arrayBuffer = await response.arrayBuffer();
+    const data = new Uint8Array(arrayBuffer);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    generateTable(jsonData);
+  } catch (err) {
+    console.error(err);
+    alert("Impossible de charger la base de données distante.");
+  }
+}
+
+// Charger automatiquement au démarrage
+window.addEventListener('load', () => {
+  loadRemoteExcel();
+});
+
+
 const translations = {
   FR: {
     title: "Plantes Médicinales",
